@@ -1,0 +1,13 @@
+{
+    "name": "genercode/installer",
+    "description": "Installer for websites built on the genercode engine",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "GenerCodeOrm\\" : "src/"
+        }
+    }
+}
