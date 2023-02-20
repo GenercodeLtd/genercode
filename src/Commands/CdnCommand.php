@@ -37,7 +37,7 @@ class CdnCommand extends GenericCommand
         ]);
 
         $cfClient->createInvalidation([
-            'DistributionId' =>config("hosting.cfdistid"),
+            'DistributionId' =>config("genercode.cloudfront_distribution_id"),
             "InvalidationBatch" => [
                 "CallerReference" => time(),
                 "Paths" => [
@@ -49,12 +49,12 @@ class CdnCommand extends GenericCommand
     }
 
     public function runWebpack() {
-        $module_dir = config("cmd.node_modules");
+        $module_dir = config("genercode.node_modules");
         $cmd = "webpack --config /home/ec2-user/manager/webpack.config.js";
             $cmd .= " --env dir=\"" . $this->download_dir . "/public/src\"";
             $cmd .= " --env modules=\"" . $module_dir . "\"";
             $cmd .= " --env output=\"" . $this->download_dir . "/public/dist\"";
-            echo "\nComamnd is " . $cmd;
+            echo "\nCommand is " . $cmd;
             echo shell_exec($cmd);
     }
 
