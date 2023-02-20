@@ -1,6 +1,5 @@
 <?php
-namespace GenerCodeOrm;
-use PressToJam\Entity as Entity;
+namespace GenerCode;
 
 class Profile {
 

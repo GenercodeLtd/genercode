@@ -1,5 +1,5 @@
 <?php
-namespace GenerCodeOrm;
+namespace GenerCode;
 
 class Permissions {
 
