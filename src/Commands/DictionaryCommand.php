@@ -11,21 +11,21 @@ class DictionaryCommand extends GenericCommand
 
     public function download($lang, $id)
     {
-        $asset = $this->http->getAsset("/data/dictionary-templates/active", ["--id"=>$id]);
+        $asset = $this->http->getAsset("/dictionary-templates/" . $id);
         file_put_contents($this->download_dir . "/dict_" . $lang . ".json");
     }
 
 
     public function createLanguage($lang)
     {
-        $res = $this->http->post("/data/dictionary-templates", ["--parent"=>  $this->project_id, "language"=>$lang, "process"=>true]);
+        $res = $this->http->post("/dictionary-templates", ["--parent"=>  $this->project_id, "language"=>$lang, "process"=>true]);
         return $res;
     }
 
     public function updateLanguage($lang)
     {
         $res = $this->http->pushAsset(
-            "/asset/dictionary-templates/template/" . $id,
+            "/dictionary-templates/template/" . $id,
             "template",
             $this->download_dir . "/dict_" . $lang.  ".json"
         );
@@ -38,7 +38,7 @@ class DictionaryCommand extends GenericCommand
         try {
             $this->login();
             $lang = $this->argument("lang");
-            $obj = $this->http->get("/data/dictionary-templates", ["--parent"=>$this->project_id, "lang"=>$lang, "__limit"=>1]);
+            $obj = $this->http->get("/dictionary-templates", ["--parent"=>$this->project_id, "lang"=>$lang, "__limit"=>1]);
             if ($obj) {
                 return;
             }

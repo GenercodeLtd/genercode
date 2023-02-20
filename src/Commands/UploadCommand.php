@@ -61,7 +61,8 @@ class UploadCommand extends GenericCommand
             // Zip archive will be created only after closing object
             $zip->close();
             $this->info('Uploading directory');
-            $this->info($this->http->pushAsset("/asset/projects/src/" . $this->project_id, "src", $zip_name));
+            $this->info($this->http->pushAsset("/projects/src/" . $this->project_id, "src", $zip_name));
+            $this->info("Upload Completed");
             //unlink($zip_name);
         } catch(\GenerCodeClient\ApiErrorException $e) {
             $this->error($e->getMessage());

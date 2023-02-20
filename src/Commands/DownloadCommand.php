@@ -32,7 +32,7 @@ class DownloadCommand extends GenericCommand
     {
         try {
             $this->login();
-            $blob = $this->http->get("/asset/projects/src/" . $this->project_id);
+            $blob = $this->http->get("/projects/src/" . $this->project_id);
 
             file_put_contents($this->download_dir . "/src.zip", (string) $blob);
 
@@ -42,7 +42,7 @@ class DownloadCommand extends GenericCommand
             $zip->close();
 
             unlink($this->download_dir . "/src.zip");
-            $this->info("Upload Completed");
+            $this->info("Download Completed");
 
             //then we need to unzip the file
         } catch(\GenerCodeClient\ApiErrorException $e) {

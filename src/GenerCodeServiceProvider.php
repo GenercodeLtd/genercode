@@ -76,7 +76,17 @@ class GenerCodeServiceProvider extends ServiceProvider {
         ]);
     }
 
+    public function publishConfigs() {
+        $this->publishes([
+            __DIR__.'/config/genercode.php' => config_path('genercode.php'),
+        ]);
+    }
+
     public function boot(\Illuminate\Routing\Router $router, \Illuminate\Contracts\Http\Kernel $kernel) {
+        
+        $this->publishConfigs();
+
+        
         if ($this->app->runningInConsole()) {
             $this->registerCommands();
         } else {

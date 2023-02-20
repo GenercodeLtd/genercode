@@ -22,10 +22,10 @@ class GenericCommand extends Command
         $this->http = new \GenerCodeClient\HttpClient("https://api.presstojam.com");
         //set token as session
 
-        $this->username = config("cmd.username");
-        $this->password = config("cmd.password");
-        $this->project_id = config("cmd.project_id");
-        $this->download_dir = config("cmd.download_dir");
+        $this->username = config("genercode.username");
+        $this->password = config("genercode.password");
+        $this->project_id = config("genercode.project_id");
+        $this->download_dir = config("genercode.download_dir");
     }
 
    
@@ -49,7 +49,7 @@ class GenericCommand extends Command
         }
 
 
-        $res = $this->http->post("/user/login/accounts", [
+        $res = $this->http->post("/user/login", [
             "email"=>$this->username,
             "password"=>$this->password
         ]);
@@ -81,7 +81,7 @@ class GenericCommand extends Command
 
 
         if (!$this->project_id) {
-            $projects = $this->http->get("/data/projects", ["__fields"=>["--id", "domain"]]);
+            $projects = $this->http->get("/projects", ["__fields"=>["--id", "domain"]]);
 
             $arr = [];
             foreach ($projects as $row) {
@@ -108,7 +108,7 @@ class GenericCommand extends Command
     public function processQueue($dispatch_id)
     {
         while (true) {
-            $res = $this->http->get("/dispatch/status/" . $dispatch_id);
+            $res = $this->http->get("/queue/status/" . $dispatch_id);
             if (!$res OR $res=="success") {
                 return true;
             } elseif ($res == "FAILED") {
