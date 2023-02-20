@@ -1,6 +1,6 @@
 {
-    "name": "genercode/installer",
-    "description": "Installer for websites built on the genercode engine",
+    "name": "genercodeltd/genercode",
+    "description": "Laravel link for websites built on the genercode engine",
     "license": "MIT",
     "require": {
         "php": ">=7.4"
