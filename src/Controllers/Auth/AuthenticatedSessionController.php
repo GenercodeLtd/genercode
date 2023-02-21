@@ -19,7 +19,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return true;
+        return response(["status"=>"success"]);
     }
 
     /**

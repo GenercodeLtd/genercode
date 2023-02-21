@@ -2,6 +2,7 @@
 namespace GenerCode\Middleware;
 
 use GenerCode\Profile;
+use Illuminate\Support\Facades\Auth;
 use Closure;
 
 class ProfileMiddleware {
@@ -9,15 +10,18 @@ class ProfileMiddleware {
    
 
     public function handle($request, Closure $next) {
-        $app = app();
-        $auth = $app->get("auth");
-        $user = $auth->user();
+        //Auth::check();
+        $user = Auth::user();
 
+        $app = app();
         //if (!$user) return $next($request);
         //$profile = $app->makeWith("factory", [$user->type]);
-        $profile = $app->make("factory")->create("admin");
-        //$profile->id = $user->id;
-        $profile->id = 1;
+        if (!$user) {
+            $profile = $app->make("factory")->create("public");
+        } else {
+            $profile = $app->make("factory")->create($user->type);
+            $profile->id = $user->id;
+        }
         $app->instance("profile", $profile);
         return $next($request);
     }
