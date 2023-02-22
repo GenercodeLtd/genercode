@@ -11,7 +11,7 @@ use GenerCode\Controllers\Auth\PasswordController;
 use GenerCode\Controllers\Auth\PasswordResetLinkController;
 use GenerCode\Controllers\Auth\RegisteredUserController;
 use GenerCode\Controllers\Auth\VerifyEmailController;
-use GenerCode\Controllers\Auth\ProfileController;
+use GenerCode\Controllers\ProfileController;
 
 class GenerCodeServiceProvider extends ServiceProvider {
 
@@ -40,6 +40,7 @@ class GenerCodeServiceProvider extends ServiceProvider {
                 ->name('password.email');
             $router->post('/user/reset-password', [NewPasswordController::class, 'store'])
                 ->name('password.store');
+            $router->get('/user/check-user', [ProfileController::class, 'checkUser']);
           
         });
 
@@ -47,10 +48,11 @@ class GenerCodeServiceProvider extends ServiceProvider {
             //Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
               //  ->middleware(['signed', 'throttle:6,1'])
               //  ->name('verification.verify');
-              $router->get('/user/check-user', [ProfileController::class, 'show']);
+              
             $router->post('/user/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
                 ->middleware('throttle:6,1')
                 ->name('verification.send');
+            $router->get('/user/dictionary', [ProfileController::class, 'getDictionary']);
 
     //Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
       //          ->name('password.confirm');
