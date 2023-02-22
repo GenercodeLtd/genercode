@@ -52,11 +52,16 @@ class UploadCommand extends GenericCommand
             $zip = new \ZipArchive();
             $zip->open($zip_name, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-            $this->zipFiles($zip, "api");
-            $this->zipFiles($zip, "public");
-            $this->zipFiles($zip, "tests");
-            $this->zipFiles($zip, "meta");
-            $this->zipFiles($zip, "migrations");
+            $this->zipFiles($zip, app_path() . "/Models/", "api/Model");
+            $this->zipFiles($zip, app_path() . "/Entity/", "api/Entity");
+            $this->zipFiles($zip, app_path() . "/Dictionary/", "api/Dictionary");
+            $this->zipFiles($zip, app_path() . "/Repository/", "api/Repository");
+            $this->zipFiles($zip, app_path() . "/Resource/", "api/Resource");
+            $this->zipFiles($zip, app_path() . "/Validation/", "api/Validation");
+            $this->zipFiles($zip, app_path() . "/Http/Controllers/", "api/Controller");
+            $this->zipFiles($zip, base_path() . "/database/migrations/", "migrations");
+            $this->zipFiles($zip, base_path() . "/genercode.json", "genercode.json");
+
        
             // Zip archive will be created only after closing object
             $zip->close();

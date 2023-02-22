@@ -17,5 +17,9 @@ return [
     "node_modules" => env("GC_NODE_MODULES", dirname(__DIR__) . "/node_modules"),
 
     //aws cloudfront distribution id for running invalidations
-    "cloudfront_distribution_id" => env("GC_CFDIST_ID")
+    "cloudfront_distribution_id" => env("GC_CFDIST_ID"),
+
+    "dictionary" => env("GC_DICTIONARY_ROOT"),
+
+    "api_type" => "slim" //slim or laravel
 ];

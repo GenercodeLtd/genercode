@@ -3,11 +3,12 @@
     "description": "Laravel link for websites built on the genercode engine",
     "license": "MIT",
     "require": {
-        "php": ">=7.4"
+        "php": ">=7.4",
+        "genercodeltd/genercodeclient": "^1.0"
     },
     "autoload" : {
         "psr-4" : {
-            "GenerCodeOrm\\" : "src/"
+            "GenerCode\\" : "src/"
         }
     }
 }

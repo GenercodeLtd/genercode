@@ -14,34 +14,63 @@ class DownloadCommand extends GenericCommand
         return false;
     }
 
-   
-    function extractFiles($zip, array $excludes = []) {
-        $files = [];
-        for ( $i=0; $i < $zip->numFiles; ++$i ) {
-            $entry = $zip->getNameIndex($i);
 
-            if (!$this->isExcluded($entry, $excludes)) {
-                $files[] = $zip->getNameIndex($i);
+    function copyDirectory($local_dir, $transfer_dir) {
+        $dir = new \DirectoryIterator(
+            base_path() . $this->download_dir . "/temp/" . $local_dir,
+        );
+
+        if (!file_exists($transfer_dir)) {
+            mkdir($transfer_dir);
+        }
+
+        foreach($dir as $file) {
+            if ($file->isDot()) continue;
+
+            if (is_dir($file->getRealPath())) {
+                if (!file_exists($file->getRealPath())) mkdir($file->getRealPath());
+            } else {
+                file_put_contents(
+                    $transfer_dir . $file->getFilename(),
+                    file_get_contents($file->getRealPath())
+                );
             }
         }
-        $zip->extractTo($this->download_dir, $files);
     }
+   
+    function copyFiles() {
+        $this->copyDirectory("api/Model",   app_path() . "/Models/");
+        $this->copyDirectory("api/Profile",   app_path() . "/Profile/");
+        $this->copyDirectory("api/Entity",   app_path() . "/Entity/");
+        $this->copyDirectory("api/Dictionary",   app_path() . "/Dictionary/");
+        $this->copyDirectory("api/Repository",   app_path() . "/Repository/");
+        $this->copyDirectory("api/Resource",   app_path() . "/Resource/");
+        $this->copyDirectory("api/Validation",   app_path() . "/Validation/");
+        $this->copyDirectory("api/Controller",   app_path() . "/Http/Controllers/");
+        $this->copyDirectory("migrations",   base_path() . "/database/migrations/");
+        file_put_contents(
+            base_path() . "/genercode.json", 
+            file_get_contents(base_path() . $this->download_dir . "/temp/genercode.json")
+        );
+    }   
 
 
     public function handle()
     {
         try {
             $this->login();
-            $blob = $this->http->get("/projects/src/" . $this->project_id);
+            $api = new \GenerCodeClient\API($this->http, $this->api_type);
+            $blob = $api->getAsset("projects", "src", $this->project_id);
 
-            file_put_contents($this->download_dir . "/src.zip", (string) $blob);
-
+            $zip_src = base_path() . $this->download_dir . "/src.zip";
+            file_put_contents($zip_src, (string) $blob);
+   
             $zip = new \ZipArchive();
-            $zip->open($this->download_dir . "/src.zip");
-            $this->extractFiles($zip, config("cmd.download_excludes", []));
+            $zip->open($zip_src);
+            $zip->extractTo(base_path() . $this->download_dir . "/temp");
             $zip->close();
-
-            unlink($this->download_dir . "/src.zip");
+            $this->copyFiles();
+            unlink($zip_src);
             $this->info("Download Completed");
 
             //then we need to unzip the file

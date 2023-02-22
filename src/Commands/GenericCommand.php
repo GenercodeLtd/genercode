@@ -14,6 +14,7 @@ class GenericCommand extends Command
     private $password;
     protected $project_id;
     protected $download_dir;
+    protected $api_type;
     
 
     public function __construct()
@@ -26,6 +27,7 @@ class GenericCommand extends Command
         $this->password = config("genercode.password");
         $this->project_id = config("genercode.project_id");
         $this->download_dir = config("genercode.download_dir");
+        $this->api_type = config("genercode.api_type");
     }
 
    
@@ -49,7 +51,7 @@ class GenericCommand extends Command
         }
 
 
-        $res = $this->http->post("/user/login", [
+        $res = $this->http->post("/user/login/accounts", [
             "email"=>$this->username,
             "password"=>$this->password
         ]);
@@ -107,8 +109,9 @@ class GenericCommand extends Command
 
     public function processQueue($dispatch_id)
     {
+        $api = new \GenerCodeClient\API($this->http, $this->api_type);
         while (true) {
-            $res = $this->http->get("/queue/status/" . $dispatch_id);
+            $res = $api->queueStatus($dispatch_id);
             if (!$res OR $res=="success") {
                 return true;
             } elseif ($res == "FAILED") {
