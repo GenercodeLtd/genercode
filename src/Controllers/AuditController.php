@@ -1,9 +1,9 @@
 <?php
 
-namespace GenerCodeOrm\Controllers;
+namespace GenerCode\Controllers;
 
-use \GenerCodeOrm\Exceptions as Exceptions;
-use \GenerCodeOrm\Models\Audit;
+use \GenerCode\Exceptions as Exceptions;
+use \GenerCode\Models\Audit;
 
 
 

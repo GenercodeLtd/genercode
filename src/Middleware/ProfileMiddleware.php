@@ -3,26 +3,32 @@ namespace GenerCode\Middleware;
 
 use GenerCode\Profile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Foundation\Application;
 use Closure;
 
 class ProfileMiddleware {
    
-   
+    protected $app;
 
-    public function handle($request, Closure $next) {
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
+
+    public function handle(\Illuminate\Http\Request $request, Closure $next) {
         //Auth::check();
-        $user = Auth::user();
+        $user = $request->user('api');
 
-        $app = app();
         //if (!$user) return $next($request);
         //$profile = $app->makeWith("factory", [$user->type]);
         if (!$user) {
-            $profile = $app->make("factory")->create("public");
+            $profile = $this->app->make(\GenerCode\ProfileHandler::class)->create("public");
         } else {
-            $profile = $app->make("factory")->create($user->type);
+            $profile = $this->app->make("factory")->create($user->type);
             $profile->id = $user->id;
         }
-        $app->instance("profile", $profile);
+        $this->app->instance("profile", $profile);
         return $next($request);
     }
 }

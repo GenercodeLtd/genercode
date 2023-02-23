@@ -1,8 +1,8 @@
 <?php
 
-namespace GenerCodeOrm;
+namespace GenerCode;
 
-use GenerCodeOrm\Cells as Cells;
+use GenerCode\Cells as Cells;
 
 class Entity
 {

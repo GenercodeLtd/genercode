@@ -1,6 +1,6 @@
 <?php
 
-namespace GenerCodeOrm\Cells;
+namespace GenerCode\Cells;
 
 class AssetCell extends MetaCell
 {

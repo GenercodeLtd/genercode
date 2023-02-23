@@ -59,6 +59,8 @@ class UploadCommand extends GenericCommand
             $this->zipFiles($zip, app_path() . "/Validation/", "api/Validation");
             $this->zipFiles($zip, app_path() . "/Http/Controllers/", "api/Controller");
             $this->zipFiles($zip, base_path() . "/database/migrations/", "migrations");
+            $zip->addFile(base_path() . "/routes/genercode-api-generate.php", "api/routes.php");
+            $zip->addFile(app_path() . "/Providers/GenerCodeAutoServiceProvider.php", "api/serviceprovider.php");
             $zip->addFile(base_path() . "/genercode.json", "genercode.json");
 
        

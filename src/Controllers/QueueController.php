@@ -1,8 +1,8 @@
 <?php
 
-namespace GenerCodeOrm\Controllers;
+namespace GenerCode\Controllers;
 
-use \GenerCodeOrm\Models\Queue;
+use \GenerCode\Models\Queue;
 
 class QueueController
 {

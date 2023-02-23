@@ -48,6 +48,18 @@ class DownloadCommand extends GenericCommand
         $this->copyDirectory($path . "/api/Validation",   app_path() . "/Validation/");
         $this->copyDirectory($path . "/api/Controller",   app_path() . "/Http/Controllers/");
         $this->copyDirectory($path . "/migrations",   base_path() . "/database/migrations/");
+        
+    
+        file_put_contents(
+            base_path() . "/routes/genercode-api-generated.php", 
+            file_get_contents($path . "/api/routes.php")
+        );
+
+        file_put_contents(
+            app_path() . "/Providers/GenerCodeAutoServiceProvider.php", 
+            file_get_contents($path . "/api/serviceprovider.php")
+        );
+        
         file_put_contents(
             base_path() . "/genercode.json", 
             file_get_contents($path . "/genercode.json")
