@@ -17,7 +17,7 @@ class DownloadCommand extends GenericCommand
 
     function copyDirectory($local_dir, $transfer_dir) {
         $dir = new \DirectoryIterator(
-            base_path() . $this->download_dir . "/temp/" . $local_dir,
+            $local_dir,
         );
 
         if (!file_exists($transfer_dir)) {
@@ -38,19 +38,19 @@ class DownloadCommand extends GenericCommand
         }
     }
    
-    function copyFiles() {
-        $this->copyDirectory("api/Model",   app_path() . "/Models/");
-        $this->copyDirectory("api/Profile",   app_path() . "/Profile/");
-        $this->copyDirectory("api/Entity",   app_path() . "/Entity/");
-        $this->copyDirectory("api/Dictionary",   app_path() . "/Dictionary/");
-        $this->copyDirectory("api/Repository",   app_path() . "/Repository/");
-        $this->copyDirectory("api/Resource",   app_path() . "/Resource/");
-        $this->copyDirectory("api/Validation",   app_path() . "/Validation/");
-        $this->copyDirectory("api/Controller",   app_path() . "/Http/Controllers/");
-        $this->copyDirectory("migrations",   base_path() . "/database/migrations/");
+    function copyFiles($path) {
+        $this->copyDirectory($path . "/api/Model",   app_path() . "/Models/");
+        $this->copyDirectory($path . "/api/Profile",   app_path() . "/Profile/");
+        $this->copyDirectory($path . "/api/Entity",   app_path() . "/Entity/");
+        $this->copyDirectory($path . "/api/Dictionary",   app_path() . "/Dictionary/");
+        $this->copyDirectory($path . "/api/Repository",   app_path() . "/Repository/");
+        $this->copyDirectory($path . "/api/Resource",   app_path() . "/Resource/");
+        $this->copyDirectory($path . "/api/Validation",   app_path() . "/Validation/");
+        $this->copyDirectory($path . "/api/Controller",   app_path() . "/Http/Controllers/");
+        $this->copyDirectory($path . "/migrations",   base_path() . "/database/migrations/");
         file_put_contents(
             base_path() . "/genercode.json", 
-            file_get_contents(base_path() . $this->download_dir . "/temp/genercode.json")
+            file_get_contents($path . "/genercode.json")
         );
     }   
 
@@ -62,14 +62,17 @@ class DownloadCommand extends GenericCommand
             $api = new \GenerCodeClient\API($this->http, $this->api_type);
             $blob = $api->getAsset("projects", "src", $this->project_id);
 
-            $zip_src = base_path() . $this->download_dir . "/src.zip";
+            $zip_src = base_path() . "/" . trim($this->download_dir, "/") . "/src.zip";
+
+            if (file_exists($zip_src)) unlink($zip_src);
             file_put_contents($zip_src, (string) $blob);
-   
+
             $zip = new \ZipArchive();
             $zip->open($zip_src);
-            $zip->extractTo(base_path() . $this->download_dir . "/temp");
+            $path = trim(base_path() . "/" . trim($this->download_dir, "/"), "/") . "/temp";
+            $zip->extractTo($path);
             $zip->close();
-            $this->copyFiles();
+            $this->copyFiles($path);
             unlink($zip_src);
             $this->info("Download Completed");
 

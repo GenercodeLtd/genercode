@@ -9,16 +9,16 @@ class UploadCommand extends GenericCommand
 
 
 
-    public function zipFiles($zip, $dir)
+    public function zipFiles($zip, $dir, $zip_dir)
     {
-        $zip->addEmptyDir($dir);
+        $zip->addEmptyDir($zip_dir);
 
-        if (!file_exists($this->download_dir . "/" . $dir)) return;
+        if (!file_exists($dir)) return;
         // Create recursive directory iterator
         /** @var SplFileInfo[] $files */
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator(
-                $this->download_dir . "/" . $dir,
+                $dir,
                 \RecursiveDirectoryIterator::SKIP_DOTS
             ),
             \RecursiveIteratorIterator::SELF_FIRST
@@ -28,15 +28,13 @@ class UploadCommand extends GenericCommand
 
         foreach ($files as $name => $file) {
             // Skip directories (they would be added automatically)
-
             $filePath = $file->getRealPath();
-            $relativePath = substr($filePath, strlen($this->download_dir));
-            $relativePath = ltrim(str_replace("\\", "/", $relativePath), "/");
+            $relativePath = ltrim(str_replace("\\", "/", $zip_dir), "/");
 
             if (!$file->isDir()) {
-                $zip->addFile($filePath, $relativePath);
+                $zip->addFile($filePath, $relativePath . "/" . $file->getFilename());
             } else {
-                $zip->addEmptyDir($relativePath);
+                $zip->addEmptyDir($relativePath . "/" . $file->getFilename());
             }
         }
     }
@@ -45,7 +43,7 @@ class UploadCommand extends GenericCommand
     {
         try {
             $this->login();
-            $zip_name = $this->download_dir . "/project.zip";
+            $zip_name = base_path() . "/src.zip";
        
             $this->info('Zipping files');
 
@@ -53,6 +51,7 @@ class UploadCommand extends GenericCommand
             $zip->open($zip_name, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
             $this->zipFiles($zip, app_path() . "/Models/", "api/Model");
+            $this->zipFiles($zip, app_path() . "/Profile/", "api/Profile");
             $this->zipFiles($zip, app_path() . "/Entity/", "api/Entity");
             $this->zipFiles($zip, app_path() . "/Dictionary/", "api/Dictionary");
             $this->zipFiles($zip, app_path() . "/Repository/", "api/Repository");
@@ -60,13 +59,15 @@ class UploadCommand extends GenericCommand
             $this->zipFiles($zip, app_path() . "/Validation/", "api/Validation");
             $this->zipFiles($zip, app_path() . "/Http/Controllers/", "api/Controller");
             $this->zipFiles($zip, base_path() . "/database/migrations/", "migrations");
-            $this->zipFiles($zip, base_path() . "/genercode.json", "genercode.json");
+            $zip->addFile(base_path() . "/genercode.json", "genercode.json");
 
        
             // Zip archive will be created only after closing object
             $zip->close();
             $this->info('Uploading directory');
-            $this->info($this->http->pushAsset("/projects/src/" . $this->project_id, "src", $zip_name));
+            $api = new \GenerCodeClient\API($this->http, $this->api_type);
+            $res = $api->pushAsset("projects", "src", $this->project_id, $zip_name);
+            $this->info($res);
             $this->info("Upload Completed");
             //unlink($zip_name);
         } catch(\GenerCodeClient\ApiErrorException $e) {
